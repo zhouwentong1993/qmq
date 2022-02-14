@@ -83,6 +83,7 @@ public class WheelTickManager implements Switchable, HashedWheelTimer.Processor 
             timer.start();
             started.set(true);
             recover();
+            // 默认每分钟去查一下消息是否应当被加载到时间轮中。
             loadScheduler.scheduleWithFixedDelay(this::load, 0, config.getLoadSegmentDelayMinutes(), TimeUnit.MINUTES);
             LOGGER.info("wheel started.");
         }
@@ -139,7 +140,9 @@ public class WheelTickManager implements Switchable, HashedWheelTimer.Processor 
     }
 
     private void load() {
+        // 获取下个时间
         long next = System.currentTimeMillis() + config.getLoadInAdvanceTimesInMillis();
+        // 定位文件位置
         long prepareLoadBaseOffset = resolveSegment(next, segmentScale);
         try {
             loadUntil(prepareLoadBaseOffset);
@@ -149,6 +152,7 @@ public class WheelTickManager implements Switchable, HashedWheelTimer.Processor 
     }
 
     private void loadUntil(long until) throws InterruptedException {
+        // 已经加载文件的 offset
         long loadedBaseOffset = loadedCursor.baseOffset();
         // have loaded
         if (loadedBaseOffset > until) return;
@@ -174,6 +178,7 @@ public class WheelTickManager implements Switchable, HashedWheelTimer.Processor 
         LOGGER.info("wheel load until {} <= {}", loadedCursor.baseOffset(), until);
     }
 
+    // important 将数据加载到时间轮中。
     private boolean loadUntilInternal(long until) {
         long index = resolveStartIndex();
         if (index < 0) return true;
@@ -283,7 +288,7 @@ public class WheelTickManager implements Switchable, HashedWheelTimer.Processor 
         }
     }
 
-    public void addWHeel(ScheduleIndex index) {
+    public void addWheel(ScheduleIndex index) {
         refresh(index);
     }
 

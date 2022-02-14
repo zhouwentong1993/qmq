@@ -45,6 +45,7 @@ import static qunar.tc.qmq.delay.store.ScheduleLogValidatorSupport.getSupport;
  * @author xufeng.deng dennisdxf@gmail.com
  * @since 2018-08-02 17:47
  */
+// 定时任务日志
 public class ScheduleLog implements Log<ScheduleIndex, LogRecord>, Disposable {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduleLog.class);
 

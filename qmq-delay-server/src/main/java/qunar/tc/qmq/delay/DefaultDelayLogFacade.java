@@ -66,6 +66,7 @@ public class DefaultDelayLogFacade implements DelayLogFacade {
                 LOGGER.error("appendMessageLog schedule log error,log:{} {},code:{}", e.getSubject(), e.getMessageId(), code);
                 throw new AppendException("appendScheduleLogError");
             }
+            // 不是立马执行的话，定时任务在哪里？
             func.apply(result.getAdditional());
         });
         bus.subscribe(MessageLogRecord.class, e -> {

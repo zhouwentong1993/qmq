@@ -28,6 +28,12 @@ public class ScheduleOffsetResolver {
         LocalDateTime.now();
     }
 
+    /**
+     *
+     * @param offset 到期时间的时间戳。
+     * @param scale 默认一小时
+     * @return 类似于 202202141800 这种，默认一小时，则后两位为 0
+     */
     public static long resolveSegment(long offset, int scale) {
         LocalDateTime localDateTime = new LocalDateTime(offset);
         long year = year(localDateTime);
@@ -37,6 +43,11 @@ public class ScheduleOffsetResolver {
         long minute = minute(localDateTime);
         minute = minute - (minute % scale);
         return year + month + day + hour + minute;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(resolveSegment(System.currentTimeMillis(), 60));
+        System.out.println(resolveSegment(System.currentTimeMillis() + 30 * 60 * 1000, 60));
     }
 
     private static long year(final LocalDateTime localDateTime) {

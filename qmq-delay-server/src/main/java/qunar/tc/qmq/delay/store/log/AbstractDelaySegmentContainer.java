@@ -71,6 +71,11 @@ public abstract class AbstractDelaySegmentContainer<T> implements SegmentContain
         }
     }
 
+    // schedule log append 逻辑
+
+    /**
+     * 把记录按照 202202141800 这种格式写入到文件中
+     */
     @Override
     @SuppressWarnings("unchecked")
     public RecordResult<T> append(LogRecord record) {

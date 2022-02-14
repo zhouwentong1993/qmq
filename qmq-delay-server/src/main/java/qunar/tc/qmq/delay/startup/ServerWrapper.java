@@ -115,11 +115,13 @@ public class ServerWrapper implements Disposable {
         this.processor = new ReceivedDelayMessageProcessor(receiver);
     }
 
+    // 在放入到 schedule log 成功之后，会调用到这里，判断是否要将当前的数据放入到时间轮中。
+    // important
     private boolean iterateCallback(final ScheduleIndex index) {
         long scheduleTime = index.getScheduleTime();
         long offset = index.getOffset();
         if (wheelTickManager.canAdd(scheduleTime, offset)) {
-            wheelTickManager.addWHeel(index);
+            wheelTickManager.addWheel(index);
             return true;
         }
 
