@@ -73,6 +73,8 @@ public class SenderProcessor implements DelayProcessor, Processor<ScheduleIndex>
         this.batchExecutor.init();
     }
 
+    // 提交到线程池执行，不能影响效率
+    // important
     @Override
     public void send(ScheduleIndex index) {
         if (!BrokerRoleManager.isDelayMaster()) {

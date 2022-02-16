@@ -56,6 +56,7 @@ public class WheelTickManager implements Switchable, HashedWheelTimer.Processor 
     private final int segmentScale;
     private final ScheduledExecutorService loadScheduler;
     private final StoreConfiguration config;
+    // 跳表
     private final DelayLogFacade facade;
     private final HashedWheelTimer timer;
     private final DelayProcessor sender;
@@ -139,8 +140,10 @@ public class WheelTickManager implements Switchable, HashedWheelTimer.Processor 
         return started.get();
     }
 
+    // 每分钟触发一次，load 数据到时间轮中。
     private void load() {
         // 获取下个时间
+        // 当前时间 + 30 分钟。
         long next = System.currentTimeMillis() + config.getLoadInAdvanceTimesInMillis();
         // 定位文件位置
         long prepareLoadBaseOffset = resolveSegment(next, segmentScale);
@@ -151,6 +154,10 @@ public class WheelTickManager implements Switchable, HashedWheelTimer.Processor 
         }
     }
 
+    /**
+     * 加载直到 until 时间的文件中的延迟消息。
+     * @param until 默认是当前时间 + 30 分钟的时间戳。
+     */
     private void loadUntil(long until) throws InterruptedException {
         // 已经加载文件的 offset
         long loadedBaseOffset = loadedCursor.baseOffset();
@@ -292,6 +299,10 @@ public class WheelTickManager implements Switchable, HashedWheelTimer.Processor 
         refresh(index);
     }
 
+    /**
+     * 当新添加的任务在游标之前触发时，直接添加到时间轮里
+     * important
+     */
     public boolean canAdd(long scheduleTime, long offset) {
         WheelLoadCursor.Cursor currentCursor = loadingCursor.cursor();
         long currentBaseOffset = currentCursor.getBaseOffset();
